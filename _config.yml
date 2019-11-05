@@ -8,7 +8,6 @@ keyword: "Neo, Neo Blog, 刘翔飞的博客, liuxiangfei, 刘祥飞"
 url: "http://8018.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: "https://github.com/8018/8018.github.io.git" # you code repository
-future: true
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
@@ -32,7 +31,7 @@ RSS: false
 # from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
 permalink: pretty
 paginate: 10
-exclude: ["less","node_modules","Gruntfile.js","package.json"]
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
 
 
