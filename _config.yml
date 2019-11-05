@@ -1,10 +1,9 @@
 # Site settings
 title: Neo's Blog
-motto: 竹杖芒鞋轻胜马
 SEOTitle: 刘祥飞的博客 | Neo's Blog
 header-img: img/home-bg.jpg
 email: liuxiangfei29@gmail.com
-description: "竹杖芒鞋轻胜马"
+description: "虽千万人，吾往矣！"
 keyword: "Neo, Neo Blog, 刘翔飞的博客, liuxiangfei, 刘祥飞"
 url: "http://8018.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
