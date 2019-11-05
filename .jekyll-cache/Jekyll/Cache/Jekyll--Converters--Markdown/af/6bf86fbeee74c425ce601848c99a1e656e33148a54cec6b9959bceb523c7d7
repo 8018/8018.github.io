@@ -1,0 +1,62 @@
+I"�<h4 id="题目">题目</h4>
+
+<p>给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。</p>
+
+<h4 id="示例">示例</h4>
+<blockquote>
+  <p>输入: “abcabcbb” 
+   输出: 3 
+   解释: 因为无重复字符的最长子串是 “abc”，所以其长度为 3。</p>
+</blockquote>
+
+<h4 id="思路">思路</h4>
+<p>这一题首先想到的是双指针，前面指针指向子串的开始，后指针指向字符串结束。如果新的字符在本子串已经存在，前指针移至存在的字符后面。</p>
+
+<p>代码如下：</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">lengthOfLongestSubstring</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+
+<span class="err">             </span><span class="kt">int</span> <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+<span class="err">             </span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Character</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">Character</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;();</span>
+
+<span class="err">             </span><span class="kt">char</span><span class="o">[]</span> <span class="n">chars</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+
+<span class="err">             </span><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">chars</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+
+<span class="err">                   </span><span class="k">if</span> <span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">]))</span> <span class="o">{</span>
+
+<span class="err">                          </span><span class="c1">//如果前面已经有这个字符 第一个指针移动到这个字符串之后</span>
+
+<span class="err">                          </span><span class="n">j</span> <span class="o">=</span> <span class="nc">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">])</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">j</span><span class="o">);</span>
+
+<span class="err">                          </span><span class="c1">//++ 不行 ++ 表示后移一位，后移一位达不到指定位置</span>
+
+<span class="err">                          </span><span class="c1">//j++;</span>
+
+<span class="err">                   </span><span class="o">}</span>
+
+
+
+<span class="err">                   </span><span class="n">length</span> <span class="o">=</span> <span class="nc">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">length</span><span class="o">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+
+<span class="err">                   </span><span class="c1">//为什么是 i+1？</span>
+
+<span class="err">                   </span><span class="c1">//因为如果最新字符在 map 中可以找到，前一个字符要被跳过，指针指向它的下一位</span>
+
+<span class="err">                   </span><span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">chars</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="n">i</span><span class="o">);</span>
+
+<span class="err">             </span><span class="o">}</span>
+
+<span class="err">             </span><span class="k">return</span> <span class="n">length</span><span class="o">;</span>
+
+<span class="err">      </span><span class="o">}</span>
+
+
+</code></pre></div></div>
+
+<blockquote>
+  <p> j = Math.max(map.get(chars[i]) + 1, j); 这个地方要注意，如果新的字符在子串中已经存在，前指针要指向它的下一个字符，所以是 i+1。</p>
+</blockquote>
+
+<p>如图，遍历到第二个 b 的时候，j 要只想第一个 b 之后的字符。</p>
+:ET
