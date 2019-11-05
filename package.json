@@ -1,8 +1,8 @@
 {
     "name": "neo-blog",
     "title": "Neo's Blog",
-    "author": "BY <liuxiangfei29@gmail.com>",
-    "version": "1.7.0",
+    "author": "Neo <liuxiangfei29@gmail.com>",
+    "version": "0.9.0",
     "homepage": "http://8018.github.io",
     "repository": {
         "type": "git",
