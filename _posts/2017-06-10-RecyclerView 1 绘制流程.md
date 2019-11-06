@@ -6,9 +6,8 @@ author:     xflyme
 header-img: img/post-bg-2017-06-10.jpg
 catalog: true
 tags:
-    - 算法
-    - LeetCode
-    - 链表
+    - Android
+    - RecyclerView
 ---
 
 
