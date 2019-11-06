@@ -3,7 +3,7 @@ layout:     post
 title:      Flutter 1 Widget Element 和 RenderObject
 date:       2019-11-01
 author:     xflyme
-header-img: img/post-bg-2019-11-01.jpg
+header-img: img/post-bg-2019-11-01.jpeg
 catalog: true
 tags:
     - Android
