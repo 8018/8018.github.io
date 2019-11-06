@@ -107,7 +107,7 @@ public ClassLoader getClassLoader() {
 
 这个过程可以用下图表示：
 
-![图一](classloader-1-1.png)
+![图一](/img/classloader-1-1.png)
 
 ##### 双亲委派模型的优点
 * 简单 双亲委派模型首先是简单易实现，现在也有其他的委派模型，这个以后有机会再学习。
