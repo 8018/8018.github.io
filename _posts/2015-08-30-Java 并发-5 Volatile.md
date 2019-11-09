@@ -3,7 +3,7 @@ layout:     post
 title:      Java 并发-5 Volatile
 date:       2015-08-30
 author:     xflyme
-header-img: img/post-bg-2015-08-30.jpg
+header-img: img/post-bg-2015-08-30.jpeg
 catalog: true
 tags:
     - java

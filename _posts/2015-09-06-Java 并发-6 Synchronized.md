@@ -3,7 +3,7 @@ layout:     post
 title:      Java 并发-6 Synchronized
 date:       2015-09-06
 author:     xflyme
-header-img: img/post-bg-2015-09-06.jpg
+header-img: img/post-bg-2015-09-06.jpeg
 catalog: true
 tags:
     - java
