@@ -3,7 +3,7 @@ layout:     post
 title:      Flutter-3 渲染流程——layout
 date:       2019-11-10
 author:     xflyme
-header-img: img/post-bg-2019-11-10.jpeg
+header-img: img/post-bg-2019-11-10.jpg
 catalog: true
 tags:
     - Flutter
