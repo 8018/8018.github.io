@@ -3,7 +3,7 @@ layout:     post
 title:      Android 事件系列-3  scrollTo、scrollBy 和 Scroller
 date:       2017-04-02
 author:     xflyme
-header-img: img/post-bg-2017-04-02.jpg
+header-img: img/post-bg-2017-04-02.jpeg
 catalog: true
 tags:
     - Android
