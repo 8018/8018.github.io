@@ -3,7 +3,7 @@ layout:     post
 title:      Flutter-6 渲染流程——needsCompositing
 date:       2019-11-12
 author:     xflyme
-header-img: img/post-bg-2019-11-13.jpeg
+header-img: img/post-bg-2019-11-12-2.jpeg
 catalog: true
 tags:
     - Flutter
