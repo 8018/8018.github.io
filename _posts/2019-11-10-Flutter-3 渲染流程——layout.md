@@ -12,7 +12,7 @@ tags:
 
 
 ### 前言
-前一节 [Flutter-2 渲染流程——bulid](https://xfly.me/2019/11/09/Flutter-2-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B-bulid/) 我们分析了 Flutter 渲染流程中的第一个（严格来说不能是第一步，前面还有动画）步骤 build，今天来看一下 layout。
+前一节 [Flutter-2 渲染流程——bulid](/2019/11/09/Flutter-2-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B-bulid/) 我们分析了 Flutter 渲染流程中的第一个（严格来说不能是第一步，前面还有动画）步骤 build，今天来看一下 layout。
 
 
 前文我们分析到，update 的时候回进行 updateRenderObject 也就是把最新的配置到 RenderObject 上。在更新的时候又会触发 markNeedsLayout(),本节我们就从 markNeedsLayout 开始。

@@ -11,7 +11,7 @@ tags:
 ---
 
 
-前文我们分析了 Flutter 渲染流程中的 [Build](https://xfly.me/2019/11/09/Flutter-2-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B-bulid/) 和 [layout](https://xfly.me/2019/11/10/Flutter-3-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B-layout/),今天我们来看 paint。
+前文我们分析了 Flutter 渲染流程中的 [Build](/2019/11/09/Flutter-2-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B-bulid/) 和 [layout](/2019/11/10/Flutter-3-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B-layout/),今天我们来看 paint。
 
 ### mark 阶段
 

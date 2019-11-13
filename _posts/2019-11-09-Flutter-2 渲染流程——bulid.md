@@ -12,7 +12,7 @@ tags:
 
 
 ### 前言
-前一节[《Widget Element 和 RenderObject》](https://xfly.me/2019/11/01/Flutter-1-Widget-Element-%E5%92%8C-RenderObject/) 我们分析了 Widget Element 和 RenderObject 之间的关系。后续继续分析 Flutter 的渲染流程。
+前一节[《Widget Element 和 RenderObject》](/2019/11/01/Flutter-1-Widget-Element-%E5%92%8C-RenderObject/) 我们分析了 Widget Element 和 RenderObject 之间的关系。后续继续分析 Flutter 的渲染流程。
 
 ![图一](/img/flutter-2-1.png)
 

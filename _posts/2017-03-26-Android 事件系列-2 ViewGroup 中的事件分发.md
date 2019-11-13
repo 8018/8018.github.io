@@ -12,7 +12,7 @@ tags:
 ---
 
 
-上一篇中我们分析了 [View 中的事件分发](https://xfly.me/2017/03/19/Android-事件系列-1-View-中的事件分发/),Android 中直接继承 View 的控件是最小单位，不能包含其他子 View，其中的分发逻辑也比较简单。本节研究下 ViewGroup 中的事件分发。
+上一篇中我们分析了 [View 中的事件分发](/2017/03/19/Android-事件系列-1-View-中的事件分发/),Android 中直接继承 View 的控件是最小单位，不能包含其他子 View，其中的分发逻辑也比较简单。本节研究下 ViewGroup 中的事件分发。
 
 ### ViewGroup 事件传递源码分析
 
