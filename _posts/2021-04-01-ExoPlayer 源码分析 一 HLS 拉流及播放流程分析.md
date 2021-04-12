@@ -310,7 +310,7 @@ TsExtractor 中会每次读取一个 Packet size 大小的数据交给 payloadRe
 ## 解封装
 解析 TS 流之前先了解一下 TS 流的文件格式：
 
-[image:F82350DA-CD45-439B-9E45-108DD00FC66C-22562-0000CA015DE7563D/27100307_wUox.png]
+![ts](/img/ts.png)
 
 >  ts层的内容是通过PID值来标识的，主要内容包括：PAT表、PMT表、音频流、视频流。解析ts流要先找到PAT表，只要找到PAT就可以找到PMT，然后就可以找到音视频流了。PAT表的PID值固定为0。PAT表和PMT表需要定期插入ts流，因为用户随时可能加入ts流，这个间隔比较小，通常每隔几个视频帧就要加入PAT和PMT。PAT和PMT表是必须的，还可以加入其它表如SDT（业务描述表）等，不过hls流只要有PAT和PMT就可以播放了。
 
