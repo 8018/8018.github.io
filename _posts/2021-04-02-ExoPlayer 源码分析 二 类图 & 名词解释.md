@@ -16,7 +16,7 @@ tags:
 
 ## 线程相关
 
-![图一](https://upload-images.jianshu.io/upload_images/46943-2f23ebea70a5392f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图一](/img/exoplayer-1.png)
 
 
 ##### LoadTask 
@@ -35,7 +35,7 @@ Loader 中有个线程池，当有工作要做的时候它会创建一个 LoadTa
 
 ### HLS
 
-![图二](https://upload-images.jianshu.io/upload_images/46943-e52eb4b38f434cb3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图二](/img/exoplayer-2.png)
 
 
 
@@ -47,12 +47,12 @@ Alternate Media 支持多种码率或多种语言的流，这时候就需要多�
 
 ### DASH
 
-![图三](https://upload-images.jianshu.io/upload_images/46943-3822f28224e03290.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图三](/img/exoplayer-3.png)
 
 
 这个类图各个组件很好的对应了 MPD 文件：
 
-![图四](https://upload-images.jianshu.io/upload_images/46943-4aa69f3e3b5b0625.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图四](/img/exoplayer-4.png)
 
 
 ##### MediaPresentationDescription（MPD）
@@ -71,14 +71,14 @@ MPD 是一种分层数据文件，用 xml 表示，一个 MPD 描述了视频的
 每个Representation由一个或者多个segment组成 ;
 
 ## DataSource
-![图五](https://upload-images.jianshu.io/upload_images/46943-c1a80143a4fe37f6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图五](/img/exoplayer-5.png)
 
 
 ##### DataSource 
 DataSource 负责提供媒体数据，DefaultHttpDataSource 等就是它不同形式的实现，这个比较好理解就不一一解释了。
 
 ## Chunk
-![图六](https://upload-images.jianshu.io/upload_images/46943-733b7981f920bf39.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图六](/img/exoplayer-6.png)
 
 
 ##### Chunk 
@@ -97,7 +97,7 @@ VTT 等字幕文件是不需要分块加载的，可以一次性加载完，Sing
 DASH 和 SmoothStreaming 都是用它加载和解析分段的多媒体数据。
 
 ## Extractor
-![图七](https://upload-images.jianshu.io/upload_images/46943-a7d9e8652b20eeda.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图七](/img/exoplayer-7.png)
 
 
 ##### Extractor 
@@ -116,14 +116,14 @@ DASH 和 SmoothStreaming 都是用它加载和解析分段的多媒体数据。
 样本数据和相应样本信息的滚动缓冲区，存储数据的容器是阻塞的双端队列，RollingSampleBuffer 将它封装成滚动的形式。
 
 ## ChunkSource
-![图八](https://upload-images.jianshu.io/upload_images/46943-5afdae506e5c8d68.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图八](/img/exoplayer-8.png)
 
 ##### ChunkSource
 用于构建并提供 Chunk 对象，上面说过 Chunk 是一种 Loadable ，它负责从网络、file 等加载数据。HlsChunkSource 并未实现 ChunkSource 接口。
 
 ## SampleSource
 
-![图九](https://upload-images.jianshu.io/upload_images/46943-945258c0fa5bc0fa.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图九](/img/exoplayer-9.png)
 
 
 ##### SampleHolder
@@ -138,14 +138,14 @@ Extractor 提取后的数据存储在 RollingSampleBuffer 中，这里的数据�
 
 ##### Render
 
-![图十](https://upload-images.jianshu.io/upload_images/46943-f2831ec4c0e5ac22.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图十](/img/exoplayer-10.png)
 
 
 Renderer 的子类并不只负责渲染，而是负责读取 Sample、解码、渲染这三个行为，Renderer 通过继承将公共的行为抽象出来。比如 SampleSourceTrackRenderer 负责从 RollingSampleBuffer 中读取数据，MediaCodecTrackRenderer 负责初始化 MediaCodec 并将数据写入 MediaCodec 的 inputBuffer 中。而
 MediaCodecAudioTrackRenderer 中则创建了 AudioTrack 负责音频输出。
 
 ## Hls 相关类图
-![图十一](https://upload-images.jianshu.io/upload_images/46943-536ee521857ab4cb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![图十一](/img/exoplayer-11.png)
 
 
 
