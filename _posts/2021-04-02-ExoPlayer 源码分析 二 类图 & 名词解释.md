@@ -14,7 +14,7 @@ tags:
 
 本文基于 ExoPlayer 2.13.2 版。
 
-## 线程相关
+### 线程相关
 
 ![图一](/img/exoplayer-1.png)
 
@@ -70,14 +70,14 @@ MPD 是一种分层数据文件，用 xml 表示，一个 MPD 描述了视频的
 ##### Segment
 每个Representation由一个或者多个segment组成 ;
 
-## DataSource
+### DataSource
 ![图五](/img/exoplayer-5.png)
 
 
 ##### DataSource 
 DataSource 负责提供媒体数据，DefaultHttpDataSource 等就是它不同形式的实现，这个比较好理解就不一一解释了。
 
-## Chunk
+### Chunk
 ![图六](/img/exoplayer-6.png)
 
 
@@ -96,7 +96,7 @@ VTT 等字幕文件是不需要分块加载的，可以一次性加载完，Sing
 ##### ContainerMediaChunk
 DASH 和 SmoothStreaming 都是用它加载和解析分段的多媒体数据。
 
-## Extractor
+### Extractor
 ![图七](/img/exoplayer-7.png)
 
 
@@ -115,13 +115,13 @@ DASH 和 SmoothStreaming 都是用它加载和解析分段的多媒体数据。
 ##### RollingSampleBuffer
 样本数据和相应样本信息的滚动缓冲区，存储数据的容器是阻塞的双端队列，RollingSampleBuffer 将它封装成滚动的形式。
 
-## ChunkSource
+### ChunkSource
 ![图八](/img/exoplayer-8.png)
 
 ##### ChunkSource
 用于构建并提供 Chunk 对象，上面说过 Chunk 是一种 Loadable ，它负责从网络、file 等加载数据。HlsChunkSource 并未实现 ChunkSource 接口。
 
-## SampleSource
+### SampleSource
 
 ![图九](/img/exoplayer-9.png)
 
@@ -136,7 +136,7 @@ Extractor 提取后的数据存储在 RollingSampleBuffer 中，这里的数据�
 
 从 RollingSampleBuffer 读取 Sample 数据。
 
-##### Render
+### Render
 
 ![图十](/img/exoplayer-10.png)
 
@@ -144,7 +144,7 @@ Extractor 提取后的数据存储在 RollingSampleBuffer 中，这里的数据�
 Renderer 的子类并不只负责渲染，而是负责读取 Sample、解码、渲染这三个行为，Renderer 通过继承将公共的行为抽象出来。比如 SampleSourceTrackRenderer 负责从 RollingSampleBuffer 中读取数据，MediaCodecTrackRenderer 负责初始化 MediaCodec 并将数据写入 MediaCodec 的 inputBuffer 中。而
 MediaCodecAudioTrackRenderer 中则创建了 AudioTrack 负责音频输出。
 
-## Hls 相关类图
+### Hls 相关类图
 ![图十一](/img/exoplayer-11.png)
 
 
