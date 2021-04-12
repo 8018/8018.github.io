@@ -6,7 +6,7 @@ author:     xflyme
 header-img: img/post-bg-2021-03-27.jpg
 catalog: true
 tags:
-    - 播放器
+    - 音视频
     - ijkplayer
     - 源码分析
 ---
