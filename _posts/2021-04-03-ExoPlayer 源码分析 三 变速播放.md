@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      ExoPlayer 源码分析 二 类图 & 名词解释
+title:      ExoPlayer 源码分析 三 变速播放
 date:       2021-04-03
 author:     xflyme
 header-img: img/post-bg-2021-04-03.jpeg
