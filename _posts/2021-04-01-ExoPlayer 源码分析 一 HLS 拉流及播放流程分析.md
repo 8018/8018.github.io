@@ -33,7 +33,8 @@ tags:
 简单而言，m3u8 文件分为两种格式：
 * 内容直接给出 TS 文件索引
 * 音频和视频分开，内容为不同码率的音频和视频的 m3u8 索引
-以上两种分法并不严谨，具体请看[官方文档](https://developer.apple.com/library/archive/technotes/tn2288/_index.html)
+
+以上两种分法是错的，具体请看[官方文档](https://developer.apple.com/library/archive/technotes/tn2288/_index.html)
 
 两种文件的内容如下：
 ```
