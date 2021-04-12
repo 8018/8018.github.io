@@ -16,7 +16,7 @@ ijkplayer 基于 FFMpeg 的 ffplay，本文将结合源码分析一下 ijkplayer
 
 播放器基本流程如下：
 
-![播放流程](https://wx3.sinaimg.cn/large/005BM3Ucgy1gph148lascj30qd0cf0th.jpg)
+![播放流程](/img/ijkplayer-1.png)
 
 ## 播放器创建
 ```c
