@@ -1,0 +1,83 @@
+# WebRTC 源码分析 一 视频从捕获到发送到网络
+## 前言
+本文是 WebRTC 系列的第一篇，我们先看一下一帧画面从捕获到发送到网络要经过哪些步骤，在此过程中逐步揭开 WebRTC 的面纱。本文就像一条藤，后续再顺着这条藤逐步分析 WebRTC 相关技术。
+
+
+## 注意
+* 本文基于 WebRTC M89
+* 本文视频捕获部分基于 Android 实现。
+
+## 正文
+![](WebRTC%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E4%B8%80%20%E8%A7%86%E9%A2%91%E4%BB%8E%E6%8D%95%E8%8E%B7%E5%88%B0%E5%8F%91%E9%80%81%E5%88%B0%E7%BD%91%E7%BB%9C/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6%20(1).png)
+
+
+从捕获到发送到网络的时序图如上，我将整个流程分为 4 个部分：
+* 视频捕获
+* 编码
+* 平滑、拥塞控制
+* 网络发送
+
+一图胜千言，本文不再贴出整个调用链的代码，只对一些关键点做简要说明。
+
+###  视频捕获
+
+Android 视频捕获有两个实现类 Camera1Capturer 和 Camera2Capturer，它们有共同的父类 CameraCapturer。当一帧画面到来的时候 CameraCapturer 中 cameraSessionEventsHandler 的 onFrameCaptured 会被调用拿到一个  VideoFrame 。
+
+然后这个  VideoFrame 会被送至 VideoBroadCaster 中，BroadCaster 顾名思义它会把 VideoFrame 发送出去。这里 VideoBroadCaster 是一种 VideoSource，VideoStreamEncoder 是 VideoSink。Source 与 Sink 简单来说就是生产者消费者。VideoBroadCaster 和 VideoStreamEncoder 建立关联的步骤比较复杂，我们稍后再分析。
+
+
+### 视频编码
+
+VideoStreamEncoder 有个 VideoEncoder 成员 encoder_ ，接下来 VideoFrame 会交由它进行编码。 VideoEncoder 具体类型是根据 SDP 协商结果创建的，这里不再深入分析。
+
+视频编码之后交由 encoded_complete_callback_ 处理，这里 encoded_complete_callback_ 就是 VideoStreamEncoder。
+
+RTPSenderVideo 会通过 LogAndSendToNetwork 将 EncodedImage 转交给网络层。接下来会通过拥塞控制将 Packets 平滑的发送出去。
+
+### 拥塞控制
+
+
+### 网络发送
+
+JsepTransportController  中会根据 mid 创建 JsepTransport，而 JsepTransport 中则聚合了真正用于数据传输的  SrtpTransport、DtlsTransport 和 P2PTransportChannel。
+
+P2PTransportChannel 是建立在 UDP 之上的 P2P 传输通道，DtlsTransport 是在其上建立的加密通道。而 SrtpTransport 成员的名称是 sdes_transport，SDES 是一种密钥协商方式，它会在 SDP 过程中完成密钥协商。后续 DtlsTransport 可以直接传输数据，减少密钥协商消耗。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

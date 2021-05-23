@@ -1,0 +1,380 @@
+# WebRTC 源码分析 三 连通性检查与提名
+## 连通性检查
+WebRTC 有三处会触发连通性检查：
+* 收集到本地 Candidate，触发 OnCandidateReady
+* 接收到 Remote Candidate，触发 PeerConnection::AddIceCandidate
+* 接收到对端 Stun ping request
+
+![](WebRTC%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E4%B8%89%20%E8%BF%9E%E9%80%9A%E6%80%A7%E6%A3%80%E6%9F%A5%E4%B8%8E%E6%8F%90%E5%90%8D/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png)
+
+这三种情况下都会触发 P2PTransportChannel::SortConnectionsAndUpdateState ，这个方法里主要会做三件事，见注释。
+
+```cpp
+void P2PTransportChannel::SortConnectionsAndUpdateState(
+    IceControllerEvent reason_to_sort) {
+  RTC_DCHECK_RUN_ON(network_thread_);
+
+  // Make sure the connection states are up-to-date since this affects how they
+  // will be sorted.
+  UpdateConnectionStates();
+
+  // Any changes after this point will require a re-sort.
+  sort_dirty_ = false;
+
+  // If necessary, switch to the new choice. Note that |top_connection| doesn't
+  // have to be writable to become the selected connection although it will
+  // have higher priority if it is writable.
+  // 1、排序，如果可以选择新的 connection
+  MaybeSwitchSelectedConnection(
+      reason_to_sort, ice_controller_->SortAndSwitchConnection(reason_to_sort));
+
+  // The controlled side can prune only if the selected connection has been
+  // nominated because otherwise it may prune the connection that will be
+  // selected by the controlling side.
+	// 2、修剪
+  if (ice_role_ == ICEROLE_CONTROLLING ||
+      (selected_connection_ && selected_connection_->nominated())) {
+    PruneConnections();
+  }
+
+  // Check if all connections are timedout.
+  bool all_connections_timedout = true;
+  for (const Connection* conn : connections()) {
+    if (conn->write_state() != Connection::STATE_WRITE_TIMEOUT) {
+      all_connections_timedout = false;
+      break;
+    }
+  }
+
+  // Now update the writable state of the channel with the information we have
+  // so far.
+  if (all_connections_timedout) {
+    HandleAllTimedOut();
+  }
+
+  // Update the state of this channel.
+  UpdateState();
+
+  // Also possibly start pinging.
+  // We could start pinging if:
+  // * The first connection was created.
+  // * ICE credentials were provided.
+  // * A TCP connection became connected.
+	// 3、ping 测试连通性以及 cost
+  MaybeStartPinging();
+}
+
+```
+
+### Connection 排序
+
+排序的条件主要有（优先级从高到低）：
+* WriteState
+* Remote nomination 标志
+* 上次接收数据时间
+* Network cost
+* Connection priority
+* Candidate generation
+
+```cpp
+IceControllerInterface::SwitchResult
+BasicIceController::SortAndSwitchConnection(IceControllerEvent reason) {
+  // stable 排序
+  absl::c_stable_sort(
+      connections_, [this](const Connection* a, const Connection* b) {
+        int cmp = CompareConnections(a, b, absl::nullopt, nullptr);
+        if (cmp != 0) {
+          return cmp > 0;
+        }
+        // Otherwise, sort based on latency estimate.
+        return a->rtt() < b->rtt();
+      });
+
+  ...
+
+  const Connection* top_connection =
+      (!connections_.empty()) ? connections_[0] : nullptr;
+
+  return ShouldSwitchConnection(reason, top_connection);
+}
+
+```
+
+```cpp
+int BasicIceController::CompareConnections(
+    const Connection* a,
+    const Connection* b,
+    absl::optional<int64_t> receiving_unchanged_threshold,
+    bool* missed_receiving_unchanged_threshold) const {
+  RTC_CHECK(a != nullptr);
+  RTC_CHECK(b != nullptr);
+
+  //1、比较 State
+  int state_cmp = CompareConnectionStates(a, b, receiving_unchanged_threshold,
+                                          missed_receiving_unchanged_threshold);
+  if (state_cmp != 0) {
+    return state_cmp;
+  }
+
+  // 如果是受控端，比较 Remote nomination 和上次接收数据时间
+  if (ice_role_func_() == ICEROLE_CONTROLLED) {
+    // Compare the connections based on the nomination states and the last data
+    // received time if this is on the controlled side.
+    if (a->remote_nomination() > b->remote_nomination()) {
+      return a_is_better;
+    }
+    if (a->remote_nomination() < b->remote_nomination()) {
+      return b_is_better;
+    }
+
+    if (a->last_data_received() > b->last_data_received()) {
+      return a_is_better;
+    }
+    if (a->last_data_received() < b->last_data_received()) {
+      return b_is_better;
+    }
+  }
+
+  // 比较 cost 和 priority
+  return CompareConnectionCandidates(a, b);
+}
+
+```
+
+#### WriteState 比较
+
+```cpp
+int BasicIceController::CompareConnectionStates(
+    const Connection* a,
+    const Connection* b,
+    absl::optional<int64_t> receiving_unchanged_threshold,
+    bool* missed_receiving_unchanged_threshold) const {
+  // First, prefer a connection that's writable or presumed writable over
+  // one that's not writable.
+  bool a_writable = a->writable() || PresumedWritable(a);
+  bool b_writable = b->writable() || PresumedWritable(b);
+  if (a_writable && !b_writable) {
+    return a_is_better;
+  }
+  if (!a_writable && b_writable) {
+    return b_is_better;
+  }
+
+  // Sort based on write-state. Better states have lower values.
+  // 值越低优先级越高
+  if (a->write_state() < b->write_state()) {
+    return a_is_better;
+  }
+  if (b->write_state() < a->write_state()) {
+    return b_is_better;
+  }
+
+  // We prefer a receiving connection to a non-receiving, higher-priority
+  // connection when sorting connections and choosing which connection to
+  // switch to.
+  // 最近有接收消息的优先
+  if (a->receiving() && !b->receiving()) {
+    return a_is_better;
+  }
+  if (!a->receiving() && b->receiving()) {
+    if (!receiving_unchanged_threshold ||
+        (a->receiving_unchanged_since() <= *receiving_unchanged_threshold &&
+         b->receiving_unchanged_since() <= *receiving_unchanged_threshold)) {
+      return b_is_better;
+    }
+    *missed_receiving_unchanged_threshold = true;
+  }
+
+  // 已经连接比未连接的优先级高
+  // TCP 才有未连接状态
+  if (a->write_state() == Connection::STATE_WRITABLE &&
+      b->write_state() == Connection::STATE_WRITABLE) {
+    if (a->connected() && !b->connected()) {
+      return a_is_better;
+    }
+    if (!a->connected() && b->connected()) {
+      return b_is_better;
+    }
+  }
+
+  return 0;
+}
+
+```
+
+WriteState 一共有四种状态：
+* STATE_WRITABLE = 0,  最近收到 ping response
+* STATE_WRITE_UNRELIABLE = 1,  之前处于 writable，最近发生过 ping 失败
+* STATE_WRITE_INIT = 2,  还没收到 ping response
+* STATE_WRITE_TIMEOUT = 3, 有很多的 ping 失败
+
+STATE_WRITABLE 优先级最高，除此之外 WriteState 值低的优先级相对较高。
+WriteState 状态切换在 Connection::UpdateState 中，这段分析在排序后面。
+
+#### Cost 和 priority 比较
+
+```cpp
+int BasicIceController::CompareConnectionCandidates(const Connection* a,
+                                                    const Connection* b) const {
+  // 比较 network cost
+  int compare_a_b_by_networks =
+      CompareCandidatePairNetworks(a, b, config_.network_preference);
+  if (compare_a_b_by_networks != a_and_b_equal) {
+    return compare_a_b_by_networks;
+  }
+
+  // Compare connection priority. Lower values get sorted last.
+  // 比较 priority，值高排名在前
+  if (a->priority() > b->priority()) {
+    return a_is_better;
+  }
+  if (a->priority() < b->priority()) {
+    return b_is_better;
+  }
+
+  // If we're still tied at this point, prefer a younger generation.
+  // (Younger generation means a larger generation number).
+  int cmp = (a->remote_candidate().generation() + a->generation()) -
+            (b->remote_candidate().generation() + b->generation());
+  if (cmp != 0) {
+    return cmp;
+  }
+
+  // A periodic regather (triggered by the regather_all_networks_interval_range)
+  // will produce candidates that appear the same but would use a new port. We
+  // want to use the new candidates and purge the old candidates as they come
+  // in, so use the fact that the old ports get pruned immediately to rank the
+  // candidates with an active port/remote candidate higher.
+  bool a_pruned = is_connection_pruned_func_(a);
+  bool b_pruned = is_connection_pruned_func_(b);
+  if (!a_pruned && b_pruned) {
+    return a_is_better;
+  }
+  if (a_pruned && !b_pruned) {
+    return b_is_better;
+  }
+
+  // Otherwise, must be equal
+  return 0;
+}
+
+```
+
+
+### WriteState 更新
+
+```cpp
+void Connection::UpdateState(int64_t now) {
+  int rtt = ConservativeRTTEstimate(rtt_);
+
+  if ((write_state_ == STATE_WRITABLE) &&
+      TooManyFailures(pings_since_last_response_, unwritable_min_checks(), rtt,
+                      now) &&
+      TooLongWithoutResponse(pings_since_last_response_, unwritable_timeout(),
+                             now)) {
+    uint32_t max_pings = unwritable_min_checks();
+    
+    set_write_state(STATE_WRITE_UNRELIABLE);
+  }
+  if ((write_state_ == STATE_WRITE_UNRELIABLE ||
+       write_state_ == STATE_WRITE_INIT) &&
+      TooLongWithoutResponse(pings_since_last_response_, inactive_timeout(),
+                             now)) {
+    RTC_LOG(LS_INFO) << ToString() << ": Timed out after "
+                     << now - pings_since_last_response_[0].sent_time
+                     << " ms without a response, rtt=" << rtt;
+    set_write_state(STATE_WRITE_TIMEOUT);
+  }
+
+  // Update the receiving state.
+  UpdateReceiving(now);
+  if (dead(now)) {
+    Destroy();
+  }
+}
+
+```
+
+这段代码里只有 WriteState 的「降级」，WriteState 的「升级」在 Connection::ReceivedPingResponse 里。在收到 ping response 后，WriteState 会被设置为 STATE_WRITABLE。
+
+### ping 远端
+略
+
+### Connection 选中
+以下几种情况可能触发选择新的 Connection：
+* 受控端接收到新的候选信息触发 OnNominated
+* 受控端接收到新的 packet
+* 上面触发连通性测试的三种情形
+		1. 收集到本地 Candidate
+		2. 接收到 Remote Candidate
+		3.  接收到对端 Stun ping request
+
+当 selected_connection_ 产生，连接就建立成功，可以同另一个 Peer 进行通信了。
+
+## ICE Nomination
+ICE 有两种提名方式：
+* Regular Nomination
+* Aggressive nomination
+
+常规流程如下：
+
+```
+L                        R
+-                        -
+STUN request ->             \  L's
+<- STUN response  /  check
+
+<- STUN request  \  R's
+STUN response ->            /  check
+
+STUN request + flag ->      \  L's
+<- STUN response  /  check
+
+Regular Nomination  
+```
+
+常规流程中，前四次握手为两端分别发起一次请求，然后分别收到一次回复。之后 Controling 一端会再次发出一个携带 USE_CANDIDATE 标志位的 Binding Request，当 Controlled 一端收到了，就接受这次提名。
+
+激进流程如下：
+
+```cpp
+L                        R
+-                        -
+STUN request + flag ->      \  L's
+
+<- STUN response  /  check
+<- STUN request  \  R's
+STUN response ->            /  check
+
+Figure 5: Aggressive Nomination
+```
+
+相比常规流程，它能节省一次握手。Controlling 端第一次 Binding Request 中会直接携带 USE_CANDIDATE 的标志位，Controlled 模式下的 Agent 收到了以后就接受这次提名。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

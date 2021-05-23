@@ -1,0 +1,158 @@
+---
+layout:     post
+title:      Coturn 安装 & 配置
+date:       2021-05-03
+author:     xflyme
+header-img: img/post-bg-2021-05-03.png
+catalog: true
+tags:
+    - 源码分析
+    - WebRTC
+---
+
+
+## 一 安装 libevent
+```
+wget https://github.com/downloads/libevent/libevent/libevent-2.1.12-stable.tar.gz
+tar zxvf libevent-2.1.12-stable.tar.gz
+cd libevent-2.1.12-stable
+./configure
+mkdir build
+cd build
+cmake ..
+make && make install
+```
+
+## 安装 coturn
+### 软件库安装
+Debian 支持通过 apt  安装 coturn
+```
+sudo apt install coturn
+```
+
+### 自己编译安装
+ [官网](https://coturn.net/turnserver) 
+#### 下载
+
+```
+wget https://coturn.net/turnserver/v4.5.0.8/turnserver-4.5.0.8.tar.gz
+
+tar -zxvf turnserver-4.5.0.8.tar.gz
+cd turnserver-4.5.0.8/
+```
+
+#### 编译安装
+```
+./configure --prefix=/usr/local/turnserver  # 指定安装的目录
+make && make install
+```
+
+#### 配置环境变量
+
+```
+vim ~/.bashrc
+```
+
+插入以下内容
+
+```
+export turnserver_home=/usr/local/turnserver
+export PATH=$PATH:$turnserver_home/bin
+```
+
+```
+source ~/.bashrc
+```
+
+### 配置 turnserver
+
+创建配置文件
+```
+touch /etc/turnserver.conf
+
+vim /etc/turnserver.conf
+```
+
+```
+# TURN server name and realm
+realm=DOMAIN
+server-name=turnserver
+
+# Use fingerprint in TURN message
+fingerprint
+
+# IPs the TURN server listens to
+listening-ip=0.0.0.0
+
+# External IP-Address of the TURN server
+external-ip=IP_ADDRESS
+
+# Main listening port
+listening-port=3478
+
+# Further ports that are open for communication
+min-port=10000
+max-port=20000
+
+# Log file path
+log-file=/var/log/turnserver.log
+
+# Enable verbose logging
+verbose
+
+# Specify the user for the TURN authentification
+user=test:test123
+
+# Enable long-term credential mechanism
+lt-cred-mech
+```
+
+### 通过配置文件启动 turnserver
+
+```
+turnserver -v -r 外部ip -a -o -c /etc/turnserver.conf
+```
+
+
+### 测试
+[测试地址](https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/)
+
+![](Coturn%20%E5%AE%89%E8%A3%85%20&%20%E9%85%8D%E7%BD%AE/%E6%88%AA%E5%B1%8F2021-05-19%20%E4%B8%8B%E5%8D%883.43.07.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
