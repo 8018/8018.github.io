@@ -1,13 +1,23 @@
-# WebRTC 源码分析 二 本地 Candidate 收集
+---
+layout:     post
+title:      WebRTC 源码分析 二 本地 Candidate 收集
+date:       2021-05-20
+author:     xflyme
+header-img: img/post-bg-2021-05-20.png
+catalog: true
+tags:
+    - 源码分析
+    - WebRTC
+---
+
 
 * 本文基于 WebRTC M89
 
-![](WebRTC%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E4%BA%8C%20%E6%9C%AC%E5%9C%B0%20Candidate%20%E6%94%B6%E9%9B%86/WebRTC%20P2P%20%E8%BF%9E%E6%8E%A5%E6%B5%81%E7%A8%8B.png)
+![图一](/img/webrtc-2-1.png)
 
 上篇文章简要的看了一下视频从采集到发送到网络的整个 pipeline。从本篇开始分析从用户进入房间到成功建立 P2P 连接收发数据的过程。由于信令服务不是 WebRTC 的一部分，本文将从 Candidate 收集开始。
 
-![](WebRTC%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E4%BA%8C%20%E6%9C%AC%E5%9C%B0%20Candidate%20%E6%94%B6%E9%9B%86/Candidate%20%E6%94%B6%E9%9B%86%E6%B5%81%E7%A8%8B.png)
-
+![图二](/img/webrtc-2-2.png)
 
 ### Candidate 分类
 Candidate 分为四类
