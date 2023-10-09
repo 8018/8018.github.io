@@ -537,14 +537,14 @@ Symbol table '.dynsym' contains 15 entries:
 * 计算出当前符号的真实地址，填入到当前 .got 表项中。(.rela.plt 中记录着当前函数在 .got 中的地址)
 
 ## 参考
-[《深入理解计算机系统》](https://hansimov.gitbook.io/csapp/part2/ch07-linking/7.12-position-independent-code)
-《程序员的自我修养：链接、装载与库》
-[elf](https://refspecs.linuxfoundation.org/elf/elf.pdf)
-[深入了解GOT,PLT和动态链接](https://www.cnblogs.com/pannengzhi/p/2018-04-09-about-got-plt.html)
-[Android Native库的加载及动态链接的过程](https://cloud.tencent.com/developer/article/1736997)
-[android源码分析之linker初始化](https://www.cnblogs.com/revercc/p/16299712.html)
-[ELF格式解读 Dynamic节](https://blog.csdn.net/qfanmingyiq/article/details/124527430)
-[深入分析动态链接的延迟绑定](https://www.ngui.cc/article/show-1270238.html)
+* [《深入理解计算机系统》](https://hansimov.gitbook.io/csapp/part2/ch07-linking/7.12-position-independent-code)
+* 《程序员的自我修养：链接、装载与库》
+* [elf](https://refspecs.linuxfoundation.org/elf/elf.pdf)
+* [深入了解GOT,PLT和动态链接](https://www.cnblogs.com/pannengzhi/p/2018-04-09-about-got-plt.html)
+* [Android Native库的加载及动态链接的过程](https://cloud.tencent.com/developer/article/1736997)
+* [android源码分析之linker初始化](https://www.cnblogs.com/revercc/p/16299712.html)
+* [ELF格式解读 Dynamic节](https://blog.csdn.net/qfanmingyiq/article/details/124527430)
+* [深入分析动态链接的延迟绑定](https://www.ngui.cc/article/show-1270238.html)
 
 
 
