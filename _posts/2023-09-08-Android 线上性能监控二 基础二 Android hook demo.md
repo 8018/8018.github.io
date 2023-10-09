@@ -3,7 +3,7 @@ layout:     post
 title:      Android 线上性能监控二 基础二 Android hook demo
 date:       2023-09-08
 author:     xflyme
-header-img: img/post-bg-2021-05-22.jpeg
+header-img: img/post-bg-2023-09-08.png
 catalog: true
 tags:
     - 性能优化

@@ -3,7 +3,7 @@ layout:     post
 title:      Android 线上性能监控一 基础一 Android 动态链接
 date:       2023-09-01
 author:     xflyme
-header-img: img/post-bg-2021-05-22.jpeg
+header-img: img/post-bg-2023-09-01.png
 catalog: true
 tags:
     - 性能优化
