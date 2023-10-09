@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      2023-09-08-Android 线上性能监控二 基础二 Android hook demo
+title:      Android 线上性能监控二 基础二 Android hook demo
 date:       2023-09-08
 author:     xflyme
 header-img: img/post-bg-2021-05-22.jpeg
