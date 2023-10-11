@@ -1,9 +1,9 @@
 ---
 layout:     post
 title:      Android 线上性能监控二 基础二 Android hook demo
-date:       2023-09-08
+date:       2023-09-22
 author:     xflyme
-header-img: img/post-bg-2023-09-08.png
+header-img: img/post-bg-2023-09-22.png
 catalog: true
 tags:
     - 性能优化
@@ -12,7 +12,7 @@ tags:
 
 一、本文目的
 
-[Android 线上性能监控一 基础一 Android 动态链接](https://8018.github.io/2023/09/21/Android-线上性能监控一-基础一-Android-动态链接/) 中把 Android 动态链接流程走了一遍，并写了一个小示例以验证链接过程。
+[Android 线上性能监控一 基础一 Android 动态链接](https://8018.github.io/2023/09/15/Android-线上性能监控一-基础一-Android-动态链接/) 中把 Android 动态链接流程走了一遍，并写了一个小示例以验证链接过程。
 
 本文将继续完善这个示例，自己动手去 hook 一个函数。
 
